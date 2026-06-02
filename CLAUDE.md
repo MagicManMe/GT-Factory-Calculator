@@ -88,7 +88,8 @@ Done: recipe index, sequential solver, planner table UI, NEI-style recipe picker
 (machine tabs + icon rows + rich tooltips; play-tested OK), NEI-style token
 search ("naq ingot" matches "Naquadah Ingot"), EBF-family coil selection
 (coil button on heat-gated lines; heat = coilHeat + 100*(tier-2) via GT's
-HeatingCoilLevel enum, feeds OverclockCalculator heat OC/discount).
+HeatingCoilLevel enum, feeds OverclockCalculator heat OC/discount) — both
+play-tested OK in the dreamcraft dev instance.
 Next: plan persistence (NBT/file) → OreDict unification → fuller multiblock
 presets (parallels, GT++ speed/EU modifiers) → matrix solver (free/eliminated
 byproduct control) → AE2 pattern / Level Maintainer export (novel differentiator).
