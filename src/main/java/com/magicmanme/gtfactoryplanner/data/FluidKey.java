@@ -1,5 +1,7 @@
 package com.magicmanme.gtfactoryplanner.data;
 
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 /**
@@ -25,6 +27,12 @@ public final class FluidKey implements ResourceKey {
     @Override
     public String displayName() {
         return localizedName;
+    }
+
+    /** Reconstruct a FluidStack (e.g. for rendering); null if the fluid vanished. */
+    public FluidStack toFluidStack(int amount) {
+        Fluid fluid = FluidRegistry.getFluid(fluidName);
+        return fluid == null ? null : new FluidStack(fluid, amount);
     }
 
     @Override

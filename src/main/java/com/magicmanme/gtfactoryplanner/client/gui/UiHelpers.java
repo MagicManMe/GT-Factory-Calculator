@@ -2,11 +2,16 @@ package com.magicmanme.gtfactoryplanner.client.gui;
 
 import java.util.Locale;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.fluids.FluidStack;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
+import com.cleanroommc.modularui.drawable.FluidDrawable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.widgets.ItemDisplayWidget;
+import com.magicmanme.gtfactoryplanner.data.FluidKey;
 import com.magicmanme.gtfactoryplanner.data.ItemKey;
 import com.magicmanme.gtfactoryplanner.data.PlannerRecipe;
 import com.magicmanme.gtfactoryplanner.data.ResourceKey;
@@ -25,6 +30,45 @@ final class UiHelpers {
         return IKey.str("§b~")
             .asWidget()
             .size(16);
+    }
+
+    /**
+     * NEI-style 16x16 ingredient icon with amount badge and rich tooltip: real item
+     * tooltip (or fluid name) plus the per-run amount.
+     */
+    static IWidget stackIcon(PlannerRecipe.RStack rstack) {
+        if (rstack.key instanceof ItemKey) {
+            int badge = (int) Math.max(1, Math.round(rstack.amountPerRun));
+            ItemStack stack = ((ItemKey) rstack.key).toStack(badge);
+            return new ItemDisplayWidget().item(stack)
+                .displayAmount(rstack.amountPerRun > 1)
+                .size(16)
+                .tooltipBuilder(tooltip -> {
+                    tooltip.addFromItem(stack);
+                    tooltip.addLine(amountTooltip(rstack));
+                });
+        }
+        FluidStack fluidStack = ((FluidKey) rstack.key).toFluidStack(1);
+        if (fluidStack != null) {
+            return new FluidDrawable(fluidStack).asWidget()
+                .size(16)
+                .tooltipBuilder(tooltip -> {
+                    tooltip.addLine("§b" + rstack.key.displayName());
+                    tooltip.addLine(amountTooltip(rstack));
+                });
+        }
+        return IKey.str("§b~")
+            .asWidget()
+            .size(16)
+            .addTooltipLine(rstack.key.displayName());
+    }
+
+    private static String amountTooltip(PlannerRecipe.RStack rstack) {
+        if (rstack.amountPerRun <= 0) {
+            return "§7Not consumed (circuit/catalyst)";
+        }
+        String unit = rstack.key instanceof FluidKey ? " L" : "x";
+        return "§7~" + formatAmount(rstack.amountPerRun) + unit + " per run";
     }
 
     /** Human-readable machine name for a recipe map's unlocalized name. */
