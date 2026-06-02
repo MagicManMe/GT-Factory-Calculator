@@ -57,7 +57,20 @@ packages, remotes, or authorship).
    `"` inside `-m @'...'@` here-strings.
 6. Dev-env log noise that is NOT an error: the splash "crash report" joke
    ("THIS IS NOT A ERROR"), antlr4 jar ASM parse failures, IC2 config
-   ParseExceptions, BiblioCraft mixin warnings.
+   ParseExceptions, BiblioCraft mixin warnings, dreamcraft "Missing
+   dependencies to load X script" lines (scripts for absent pack mods).
+7. **NEI shows no GT machine tabs in dev runClient — expected, unfixable-ish,
+   cosmetic.** NEI's plugin discovery falls back to a classpath scanner
+   (`ClassDiscoverer` for `NEI*Config.class`) in RFG dev and misses GT5U's
+   `NEIGTConfig`. GT recipes are still fully present in `ALL_RECIPE_MAPS`
+   (which is what we read). NEI works fine in the packaged GTNH instance.
+8. Bare GT5U dev ≠ GTNH pack recipes. The pack's recipe layer is
+   **NewHorizonsCoreMod ("dreamcraft")** — we include it as
+   `runtimeOnlyNonPublishable` so runClient is recipe-accurate (~102k recipes
+   vs ~93k without). Example gate this explains: GT5U only outputs HOT ingots
+   from EBF when material blast temp > 1750K (`ProcessingDust.java`);
+   stainless is 1700K → direct ingot, no hot stage. Final verification of
+   recipe behavior belongs in a real GTNH instance (drop the jar in mods/).
 
 ## Useful facts
 
