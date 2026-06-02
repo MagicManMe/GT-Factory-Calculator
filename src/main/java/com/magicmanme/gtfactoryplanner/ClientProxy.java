@@ -1,6 +1,6 @@
-package com.eurowall.gtfactoryplanner;
+package com.magicmanme.gtfactoryplanner;
 
-import com.eurowall.gtfactoryplanner.client.PlannerKeybinds;
+import com.magicmanme.gtfactoryplanner.client.PlannerKeybinds;
 
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 

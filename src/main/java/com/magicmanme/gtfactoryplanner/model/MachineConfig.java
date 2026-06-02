@@ -1,4 +1,4 @@
-package com.eurowall.gtfactoryplanner.model;
+package com.magicmanme.gtfactoryplanner.model;
 
 /**
  * How a recipe line is run: voltage tier, parallels, OC behavior, coil heat.

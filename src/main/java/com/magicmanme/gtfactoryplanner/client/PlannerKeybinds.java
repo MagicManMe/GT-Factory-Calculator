@@ -1,11 +1,11 @@
-package com.eurowall.gtfactoryplanner.client;
+package com.magicmanme.gtfactoryplanner.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 
 import org.lwjgl.input.Keyboard;
 
-import com.eurowall.gtfactoryplanner.client.gui.GuiPlanner;
+import com.magicmanme.gtfactoryplanner.client.gui.GuiPlanner;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;

@@ -1,9 +1,9 @@
-package com.eurowall.gtfactoryplanner.model;
+package com.magicmanme.gtfactoryplanner.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.eurowall.gtfactoryplanner.data.ResourceKey;
+import com.magicmanme.gtfactoryplanner.data.ResourceKey;
 
 /**
  * A production plan: target output rates plus an ordered list of recipe lines.

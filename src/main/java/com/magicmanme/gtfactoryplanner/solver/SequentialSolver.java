@@ -1,12 +1,12 @@
-package com.eurowall.gtfactoryplanner.solver;
+package com.magicmanme.gtfactoryplanner.solver;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.eurowall.gtfactoryplanner.data.PlannerRecipe;
-import com.eurowall.gtfactoryplanner.data.ResourceKey;
-import com.eurowall.gtfactoryplanner.model.Plan;
-import com.eurowall.gtfactoryplanner.model.PlanLine;
+import com.magicmanme.gtfactoryplanner.data.PlannerRecipe;
+import com.magicmanme.gtfactoryplanner.data.ResourceKey;
+import com.magicmanme.gtfactoryplanner.model.Plan;
+import com.magicmanme.gtfactoryplanner.model.PlanLine;
 
 /**
  * Default solver: top-down demand propagation, modeled on Factory Planner's

@@ -1,12 +1,12 @@
-package com.eurowall.gtfactoryplanner.solver;
+package com.magicmanme.gtfactoryplanner.solver;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.eurowall.gtfactoryplanner.data.ResourceKey;
-import com.eurowall.gtfactoryplanner.model.PlanLine;
+import com.magicmanme.gtfactoryplanner.data.ResourceKey;
+import com.magicmanme.gtfactoryplanner.model.PlanLine;
 
 /**
  * Solved plan: per-line machine counts and rates, plus the plan-level balance

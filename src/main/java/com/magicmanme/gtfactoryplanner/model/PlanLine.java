@@ -1,6 +1,6 @@
-package com.eurowall.gtfactoryplanner.model;
+package com.magicmanme.gtfactoryplanner.model;
 
-import com.eurowall.gtfactoryplanner.data.PlannerRecipe;
+import com.magicmanme.gtfactoryplanner.data.PlannerRecipe;
 
 /**
  * One row of a plan: a user-chosen recipe and the machine configuration to run it

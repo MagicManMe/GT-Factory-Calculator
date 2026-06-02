@@ -1,4 +1,4 @@
-package com.eurowall.gtfactoryplanner;
+package com.magicmanme.gtfactoryplanner;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,8 +28,8 @@ public class GTFactoryPlanner {
     public static final Logger LOG = LogManager.getLogger(MODID);
 
     @SidedProxy(
-        clientSide = "com.eurowall.gtfactoryplanner.ClientProxy",
-        serverSide = "com.eurowall.gtfactoryplanner.CommonProxy")
+        clientSide = "com.magicmanme.gtfactoryplanner.ClientProxy",
+        serverSide = "com.magicmanme.gtfactoryplanner.CommonProxy")
     public static CommonProxy proxy;
 
     @Mod.EventHandler

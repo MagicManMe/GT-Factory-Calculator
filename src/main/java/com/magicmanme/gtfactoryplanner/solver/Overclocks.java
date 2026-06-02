@@ -1,7 +1,7 @@
-package com.eurowall.gtfactoryplanner.solver;
+package com.magicmanme.gtfactoryplanner.solver;
 
-import com.eurowall.gtfactoryplanner.data.PlannerRecipe;
-import com.eurowall.gtfactoryplanner.model.MachineConfig;
+import com.magicmanme.gtfactoryplanner.data.PlannerRecipe;
+import com.magicmanme.gtfactoryplanner.model.MachineConfig;
 
 import gregtech.api.enums.GTValues;
 import gregtech.api.util.OverclockCalculator;

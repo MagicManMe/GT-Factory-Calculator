@@ -1,4 +1,4 @@
-package com.eurowall.gtfactoryplanner.data;
+package com.magicmanme.gtfactoryplanner.data;
 
 /**
  * Identity of a plannable resource — an item (+meta) or a fluid. Used as the node

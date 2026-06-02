@@ -29,7 +29,7 @@ Every existing GTNH planning tool lives outside the game ([gtnh-flow](https://gi
 ## Architecture
 
 ```
-com.eurowall.gtfactoryplanner
+com.magicmanme.gtfactoryplanner
 ├── data/      RecipeIndex over GT's recipe maps; ItemKey/FluidKey/PlannerRecipe
 ├── model/     Plan, PlanLine, MachineConfig (voltage tier, parallels, heat, ...)
 ├── solver/    SequentialSolver (demand propagation) + Overclocks (GT OC wrapper)

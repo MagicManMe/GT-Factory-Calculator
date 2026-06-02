@@ -1,4 +1,4 @@
-package com.eurowall.gtfactoryplanner;
+package com.magicmanme.gtfactoryplanner;
 
 import java.io.File;
 

@@ -1,8 +1,8 @@
-package com.eurowall.gtfactoryplanner.client.gui;
+package com.magicmanme.gtfactoryplanner.client.gui;
 
 import net.minecraft.client.gui.GuiScreen;
 
-import com.eurowall.gtfactoryplanner.data.RecipeIndex;
+import com.magicmanme.gtfactoryplanner.data.RecipeIndex;
 
 /**
  * v0 planner screen: proves the recipe index works by showing its stats.

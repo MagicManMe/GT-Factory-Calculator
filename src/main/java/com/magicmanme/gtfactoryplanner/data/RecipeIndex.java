@@ -1,4 +1,4 @@
-package com.eurowall.gtfactoryplanner.data;
+package com.magicmanme.gtfactoryplanner.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,8 +8,8 @@ import java.util.Map;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
-import com.eurowall.gtfactoryplanner.Config;
-import com.eurowall.gtfactoryplanner.GTFactoryPlanner;
+import com.magicmanme.gtfactoryplanner.Config;
+import com.magicmanme.gtfactoryplanner.GTFactoryPlanner;
 
 import gregtech.api.recipe.RecipeMap;
 import gregtech.api.util.GTRecipe;
