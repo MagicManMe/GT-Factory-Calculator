@@ -64,6 +64,15 @@ Both are MIT-licensed Lua mods that read recipe data live from the game.
 - EBF coil heat: 5% EU/t discount per 900 K above recipe heat
   (`0.95^floor(delta/900)`); one perfect (/4) OC per 1800 K above, remainder
   regular. Recipe heat lives in `GTRecipe.mSpecialValue`.
+- Coils: `gregtech.api.enums.HeatingCoilLevel` (read at runtime, don't hardcode):
+  Cupronickel 1801 K, Kanthal 2701, Nichrome 3601, TPV-Alloy 4501, HSS-G 5401,
+  HSS-S 6301, Naquadah 7201, Naquadah Alloy 8101, Trinium 9001, Electrum Flux
+  9901, Awakened Draconium 10801, Infinity 11701, Hypogen 12601, Eternal 13501.
+  EBF total heat capacity (`MTEElectricBlastFurnace`):
+  `coilHeat + 100 * (voltageTier - 2)`; recipe runs iff `mSpecialValue <= capacity`.
+- EBF hot-ingot gate (`ProcessingDust.java`): EBF outputs `ingotHot` only when
+  `mBlastFurnaceTemp > 1750`, else the regular ingot directly (stainless = 1700 K
+  -> no hot stage in base GT5U; pack-layer recipes come from NewHorizonsCoreMod).
 - Recipe tier: `max(1, ceil(log4(EUt/8)))`. Machine count for a target rate:
   keep fractional for math, round up for builds (fraction = duty cycle).
 - Multiblock parallels multiply runs per cycle (e.g. Mega EBF = 256); GT++ multis
