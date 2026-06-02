@@ -5,7 +5,8 @@ import net.minecraft.client.settings.KeyBinding;
 
 import org.lwjgl.input.Keyboard;
 
-import com.magicmanme.gtfactoryplanner.client.gui.GuiPlanner;
+import com.cleanroommc.modularui.factory.ClientGUI;
+import com.magicmanme.gtfactoryplanner.client.gui.PlannerScreen;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -39,7 +40,7 @@ public final class PlannerKeybinds {
             if (!OPEN_PLANNER.isPressed()) return;
             Minecraft mc = Minecraft.getMinecraft();
             if (mc.currentScreen == null && mc.theWorld != null) {
-                mc.displayGuiScreen(new GuiPlanner());
+                ClientGUI.open(new PlannerScreen());
             }
         }
     }
