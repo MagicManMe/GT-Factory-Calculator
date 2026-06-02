@@ -1,0 +1,21 @@
+{
+	"modListVersion": 2,
+	"modList": [{
+		"modid": "${modId}",
+		"name": "${modName}",
+		"description": "In-game production planner for GregTech: New Horizons. Set a target output rate, pick recipes, and get machine counts, overclocks and EU/t — like Factorio's Helmod/Factory Planner, but reading live GT recipe data.",
+		"version": "${modVersion}",
+		"mcversion": "${minecraftVersion}",
+		"url": "",
+		"updateUrl": "",
+		"authorList": ["Jake"],
+		"credits": "Inspired by Helmod and Factory Planner (Factorio)",
+		"logoFile": "",
+		"screenshots": [],
+		"parent": "",
+		"requiredMods": ["gregtech"],
+		"dependencies": ["gregtech"],
+		"dependants": [],
+		"useDependencyInformation": true
+	}]
+}
