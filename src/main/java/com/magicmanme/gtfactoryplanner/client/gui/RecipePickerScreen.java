@@ -4,9 +4,8 @@ import java.util.List;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.screen.CustomModularScreen;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
+import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
 import com.cleanroommc.modularui.widgets.ListWidget;
@@ -24,18 +23,18 @@ import com.magicmanme.gtfactoryplanner.model.PlanLine;
  * Lists every recipe that produces a given resource; clicking one adds it as a
  * plan line (machine tier auto-set to the lowest that can run the recipe).
  * Recipes are always chosen by the user — never auto-picked.
+ *
+ * Note: extends ModularScreen with a panel-builder lambda capturing constructor
+ * parameters. Do NOT use CustomModularScreen with instance fields here — the
+ * super constructor invokes buildUI before subclass fields are assigned.
  */
-public class RecipePickerScreen extends CustomModularScreen {
-
-    private final ResourceKey target;
+public class RecipePickerScreen extends ModularScreen {
 
     public RecipePickerScreen(ResourceKey target) {
-        super(GTFactoryPlanner.MODID);
-        this.target = target;
+        super(GTFactoryPlanner.MODID, context -> buildPanel(target));
     }
 
-    @Override
-    public ModularPanel buildUI(ModularGuiContext context) {
+    private static ModularPanel buildPanel(ResourceKey target) {
         List<PlannerRecipe> recipes = RecipeIndex.get()
             .producing(target);
 
@@ -52,7 +51,7 @@ public class RecipePickerScreen extends CustomModularScreen {
                     .child(
                         new ListWidget<>().widthRel(1f)
                             .expanded()
-                            .children(recipes, this::recipeRow))
+                            .children(recipes, RecipePickerScreen::recipeRow))
                     .child(
                         new ButtonWidget<>().width(50)
                             .height(14)
@@ -63,7 +62,7 @@ public class RecipePickerScreen extends CustomModularScreen {
                             })));
     }
 
-    private IWidget recipeRow(PlannerRecipe recipe) {
+    private static IWidget recipeRow(PlannerRecipe recipe) {
         String label = "§b" + UiHelpers.machineName(recipe.mapName) + "§r - " + UiHelpers.recipeSummary(recipe);
         return Flow.row()
             .widthRel(1f)

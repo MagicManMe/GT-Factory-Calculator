@@ -4,9 +4,8 @@ import java.util.function.Consumer;
 
 import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
-import com.cleanroommc.modularui.screen.CustomModularScreen;
 import com.cleanroommc.modularui.screen.ModularPanel;
-import com.cleanroommc.modularui.screen.viewport.ModularGuiContext;
+import com.cleanroommc.modularui.screen.ModularScreen;
 import com.cleanroommc.modularui.utils.Alignment;
 import com.cleanroommc.modularui.value.StringValue;
 import com.cleanroommc.modularui.widgets.ButtonWidget;
@@ -22,26 +21,34 @@ import com.magicmanme.gtfactoryplanner.data.ResourceKey;
  * Searchable product picker: type to filter, click [>] to choose. The result
  * list is rebuilt per keystroke, capped at {@link #MAX_RESULTS} rows (searching
  * ~100k products per frame via enabled-predicates would be too slow).
+ *
+ * Note: extends ModularScreen with a panel-builder lambda capturing constructor
+ * parameters. Do NOT use CustomModularScreen with instance fields here — the
+ * super constructor invokes buildUI before subclass fields are assigned.
  */
-public class ItemPickerScreen extends CustomModularScreen {
+public class ItemPickerScreen extends ModularScreen {
 
     private static final int MAX_RESULTS = 100;
 
-    private final Consumer<ResourceKey> onPick;
-    private String query = "";
-    @SuppressWarnings("rawtypes")
-    private ListWidget resultList;
-
     public ItemPickerScreen(Consumer<ResourceKey> onPick) {
-        super(GTFactoryPlanner.MODID);
-        this.onPick = onPick;
+        super(GTFactoryPlanner.MODID, context -> buildPanel(onPick));
     }
 
-    @Override
-    public ModularPanel buildUI(ModularGuiContext context) {
-        resultList = new ListWidget<>().widthRel(1f)
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private static ModularPanel buildPanel(Consumer<ResourceKey> onPick) {
+        // Mutable state shared by the search field and the rebuild action; held in
+        // locals (captured by lambdas) rather than screen fields, see class note.
+        String[] query = { "" };
+        ListWidget resultList = (ListWidget) new ListWidget<>().widthRel(1f)
             .expanded();
-        rebuildResults();
+
+        Runnable rebuild = () -> {
+            resultList.removeAll();
+            for (SearchCatalog.Entry entry : SearchCatalog.search(query[0], MAX_RESULTS)) {
+                resultList.child(resultRow(entry, onPick));
+            }
+        };
+        rebuild.run();
 
         return ModularPanel.defaultPanel("item_picker", 260, 230)
             .padding(7)
@@ -53,10 +60,10 @@ public class ItemPickerScreen extends CustomModularScreen {
                     .child(
                         IKey.str("§lChoose a product")
                             .asWidget())
-                    .child(new TextFieldWidget().value(new StringValue.Dynamic(() -> query, text -> {
-                        if (!text.equals(query)) {
-                            query = text;
-                            rebuildResults();
+                    .child(new TextFieldWidget().value(new StringValue.Dynamic(() -> query[0], text -> {
+                        if (!text.equals(query[0])) {
+                            query[0] = text;
+                            rebuild.run();
                         }
                     }))
                         .autoUpdateOnChange(true)
@@ -73,15 +80,7 @@ public class ItemPickerScreen extends CustomModularScreen {
                             })));
     }
 
-    @SuppressWarnings("unchecked")
-    private void rebuildResults() {
-        resultList.removeAll();
-        for (SearchCatalog.Entry entry : SearchCatalog.search(query, MAX_RESULTS)) {
-            resultList.child(resultRow(entry));
-        }
-    }
-
-    private IWidget resultRow(SearchCatalog.Entry entry) {
+    private static IWidget resultRow(SearchCatalog.Entry entry, Consumer<ResourceKey> onPick) {
         return Flow.row()
             .widthRel(1f)
             .height(18)
