@@ -16,10 +16,72 @@ import com.magicmanme.gtfactoryplanner.data.ItemKey;
 import com.magicmanme.gtfactoryplanner.data.PlannerRecipe;
 import com.magicmanme.gtfactoryplanner.data.ResourceKey;
 
+import gregtech.api.enums.HeatingCoilLevel;
+
 /** Small shared UI building blocks. */
 final class UiHelpers {
 
     private UiHelpers() {}
+
+    // ------------------------------------------------------------------- coils
+
+    /** Selectable coil levels from GT's own enum (skips None and unimplemented ULV). */
+    private static final java.util.List<HeatingCoilLevel> COILS = buildCoils();
+
+    private static java.util.List<HeatingCoilLevel> buildCoils() {
+        java.util.List<HeatingCoilLevel> coils = new java.util.ArrayList<>();
+        for (HeatingCoilLevel level : HeatingCoilLevel.values()) {
+            if (level == HeatingCoilLevel.None || level == HeatingCoilLevel.ULV) continue;
+            coils.add(level);
+        }
+        return coils;
+    }
+
+    /** Whether this recipe's machine uses heating coils (EBF family, plasma forge). */
+    static boolean usesCoils(PlannerRecipe recipe) {
+        return recipe.specialValue > 0
+            && (recipe.mapName.contains("blastfurnace") || recipe.mapName.contains("plasmaforge"));
+    }
+
+    /** Lowest coil base heat that lets the recipe run at the given voltage tier. */
+    static int minCoilHeatFor(PlannerRecipe recipe, int voltageTier) {
+        int tierBonus = 100 * Math.max(0, voltageTier - 2);
+        for (HeatingCoilLevel level : COILS) {
+            if (level.getHeat() + tierBonus >= recipe.specialValue) return (int) level.getHeat();
+        }
+        return (int) COILS.get(COILS.size() - 1)
+            .getHeat();
+    }
+
+    /** Display name of the coil with the given base heat (e.g. "Nichrome"). */
+    static String coilName(int coilHeat) {
+        for (HeatingCoilLevel level : COILS) {
+            if ((int) level.getHeat() == coilHeat) return level.getName();
+        }
+        return coilHeat + "K";
+    }
+
+    /**
+     * Next/previous selectable coil, wrapping within [lowest viable, best].
+     * {@code minHeat} is the floor (the recipe must still be able to run).
+     */
+    static int cycleCoilHeat(int currentHeat, int delta, int minHeat) {
+        int currentIndex = coilIndex(currentHeat);
+        int minIndex = coilIndex(minHeat);
+        int index = currentIndex + delta;
+        if (index < minIndex) index = COILS.size() - 1;
+        if (index >= COILS.size()) index = minIndex;
+        return (int) COILS.get(index)
+            .getHeat();
+    }
+
+    private static int coilIndex(int coilHeat) {
+        for (int i = 0; i < COILS.size(); i++) {
+            if ((int) COILS.get(i)
+                .getHeat() == coilHeat) return i;
+        }
+        return 0;
+    }
 
     /** 16x16 icon widget for a resource (item icon, or a text placeholder for fluids). */
     static IWidget icon(ResourceKey key) {

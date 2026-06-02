@@ -85,7 +85,10 @@ packages, remotes, or authorship).
 ## Roadmap (see README for the full list)
 
 Done: recipe index, sequential solver, planner table UI, NEI-style recipe picker
-(machine tabs + icon rows + rich tooltips — committed but NOT yet play-tested).
-Next: play-test picker → plan persistence (NBT/file) → OreDict unification →
-multiblock presets (parallels/coils) → matrix solver (free/eliminated byproduct
-control) → AE2 pattern / Level Maintainer export (novel differentiator).
+(machine tabs + icon rows + rich tooltips; play-tested OK), NEI-style token
+search ("naq ingot" matches "Naquadah Ingot"), EBF-family coil selection
+(coil button on heat-gated lines; heat = coilHeat + 100*(tier-2) via GT's
+HeatingCoilLevel enum, feeds OverclockCalculator heat OC/discount).
+Next: plan persistence (NBT/file) → OreDict unification → fuller multiblock
+presets (parallels, GT++ speed/EU modifiers) → matrix solver (free/eliminated
+byproduct control) → AE2 pattern / Level Maintainer export (novel differentiator).

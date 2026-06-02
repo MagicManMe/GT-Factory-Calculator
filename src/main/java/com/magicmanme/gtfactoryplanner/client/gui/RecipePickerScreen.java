@@ -21,6 +21,7 @@ import com.cleanroommc.modularui.widgets.layout.Flow;
 import com.cleanroommc.modularui.widgets.textfield.TextFieldWidget;
 import com.magicmanme.gtfactoryplanner.GTFactoryPlanner;
 import com.magicmanme.gtfactoryplanner.client.PlannerState;
+import com.magicmanme.gtfactoryplanner.client.SearchCatalog;
 import com.magicmanme.gtfactoryplanner.data.PlannerRecipe;
 import com.magicmanme.gtfactoryplanner.data.RecipeIndex;
 import com.magicmanme.gtfactoryplanner.data.ResourceKey;
@@ -102,11 +103,12 @@ public class RecipePickerScreen extends ModularScreen {
 
         Runnable rebuildRecipes = () -> {
             recipeList.removeAll();
+            String[] tokens = SearchCatalog.tokenize(query[0]);
             int added = 0;
             for (Map.Entry<String, List<Entry>> group : orderedGroups) {
                 if (selectedMap[0] != null && !selectedMap[0].equals(group.getKey())) continue;
                 for (Entry entry : group.getValue()) {
-                    if (!query[0].isEmpty() && !entry.searchText.contains(query[0])) continue;
+                    if (!SearchCatalog.matchesAll(entry.searchText, tokens)) continue;
                     if (added >= MAX_ROWS) break;
                     recipeList.child(recipeRow(entry.recipe));
                     added++;
@@ -230,8 +232,13 @@ public class RecipePickerScreen extends ModularScreen {
                 .overlay(IKey.str("§2+"))
                 .addTooltipLine("Add this recipe to the plan")
                 .onMousePressed(b -> {
-                    PlannerState.plan.lines
-                        .add(new PlanLine(recipe, new MachineConfig(PlannerState.minTierFor(recipe.euT))));
+                    int tier = PlannerState.minTierFor(recipe.euT);
+                    MachineConfig config = new MachineConfig(tier);
+                    if (UiHelpers.usesCoils(recipe)) {
+                        // Cheapest coils that let the recipe run at this tier.
+                        config.coilHeat = UiHelpers.minCoilHeatFor(recipe, tier);
+                    }
+                    PlannerState.plan.lines.add(new PlanLine(recipe, config));
                     PlannerScreen.reopen();
                     return true;
                 }));

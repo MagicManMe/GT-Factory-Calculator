@@ -24,6 +24,7 @@ import com.magicmanme.gtfactoryplanner.data.RecipeIndex;
 import com.magicmanme.gtfactoryplanner.data.ResourceKey;
 import com.magicmanme.gtfactoryplanner.model.Plan;
 import com.magicmanme.gtfactoryplanner.model.PlanLine;
+import com.magicmanme.gtfactoryplanner.solver.Overclocks;
 import com.magicmanme.gtfactoryplanner.solver.PlanResult;
 
 import gregtech.api.enums.GTValues;
@@ -93,7 +94,7 @@ public class PlannerScreen extends CustomModularScreen {
                     .str("§6Total average power: %s EU/t", UiHelpers.formatAmount(PlannerState.result.totalAverageEuT)))
                 .asWidget());
 
-        return ModularPanel.defaultPanel("planner", 320, 240)
+        return ModularPanel.defaultPanel("planner", 370, 240)
             .padding(7)
             .child(root);
     }
@@ -151,7 +152,7 @@ public class PlannerScreen extends CustomModularScreen {
     // ------------------------------------------------------------------- lines
 
     private IWidget lineRow(Plan plan, PlanLine line) {
-        return Flow.row()
+        Flow row = Flow.row()
             .widthRel(1f)
             .height(18)
             .childPadding(3)
@@ -168,15 +169,41 @@ public class PlannerScreen extends CustomModularScreen {
                     .onMousePressed(mouseButton -> {
                         cycleTier(line, mouseButton == 0 ? 1 : -1);
                         return true;
-                    }))
-            .child(
-                IKey.dynamicKey(() -> IKey.str("§e%s§7 mach.", UiHelpers.formatAmount(machinesOf(line))))
-                    .asWidget()
-                    .width(64))
+                    }));
+
+        if (UiHelpers.usesCoils(line.recipe)) {
+            row.child(
+                new ButtonWidget<>().width(54)
+                    .height(14)
+                    .overlay(IKey.dynamicKey(() -> IKey.str(UiHelpers.coilName(line.machine.coilHeat))))
+                    .tooltipAutoUpdate(true)
+                    .tooltipBuilder(tooltip -> {
+                        tooltip.addLine(
+                            "Coils: " + UiHelpers.coilName(line.machine.coilHeat)
+                                + " ("
+                                + Overclocks.totalHeatCapacity(line.machine)
+                                + "K total)");
+                        tooltip.addLine("Recipe needs " + line.recipe.specialValue + "K");
+                        tooltip.addLine("§7Click: better coils. Right-click: worse.");
+                        tooltip.addLine("§7+5% EU discount per 900K over; perfect OC per 1800K over.");
+                    })
+                    .onMousePressed(mouseButton -> {
+                        int minHeat = UiHelpers.minCoilHeatFor(line.recipe, line.machine.voltageTier);
+                        line.machine.coilHeat = UiHelpers
+                            .cycleCoilHeat(line.machine.coilHeat, mouseButton == 0 ? 1 : -1, minHeat);
+                        PlannerState.resolve();
+                        return true;
+                    }));
+        }
+
+        return row.child(
+            IKey.dynamicKey(() -> IKey.str("§e%s§7 mach.", UiHelpers.formatAmount(machinesOf(line))))
+                .asWidget()
+                .width(58))
             .child(
                 IKey.dynamicKey(() -> IKey.str("§c%s§7 EU/t", UiHelpers.formatAmount(eutOf(line))))
                     .asWidget()
-                    .width(72))
+                    .width(68))
             .child(
                 new ButtonWidget<>().width(14)
                     .height(14)
@@ -196,6 +223,11 @@ public class PlannerScreen extends CustomModularScreen {
         if (tier < min) tier = max;
         if (tier > max) tier = min;
         line.machine.voltageTier = tier;
+        // Lowering the tier shrinks the +100K/tier heat bonus — keep the recipe runnable.
+        if (UiHelpers.usesCoils(line.recipe)) {
+            int minHeat = UiHelpers.minCoilHeatFor(line.recipe, line.machine.voltageTier);
+            if (line.machine.coilHeat < minHeat) line.machine.coilHeat = minHeat;
+        }
         PlannerState.resolve();
     }
 

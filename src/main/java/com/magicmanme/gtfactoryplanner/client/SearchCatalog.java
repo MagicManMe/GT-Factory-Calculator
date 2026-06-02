@@ -46,20 +46,40 @@ public final class SearchCatalog {
         return local;
     }
 
-    /** Case-insensitive substring search over product names, capped at {@code limit}. */
+    /**
+     * NEI-style search over product names, capped at {@code limit}: the query is
+     * split on whitespace and every token must match as a substring, so
+     * "naq ingot" finds "Naquadah Ingot".
+     */
     public static List<Entry> search(String query, int limit) {
-        String lowerQuery = query == null ? ""
-            : query.trim()
-                .toLowerCase(Locale.ROOT);
+        String[] tokens = tokenize(query);
         List<Entry> matches = new ArrayList<>(limit);
         for (Entry entry : all()) {
-            if (lowerQuery.isEmpty() || entry.lowerName.contains(lowerQuery)) {
+            if (matchesAll(entry.lowerName, tokens)) {
                 matches.add(entry);
                 if (matches.size() >= limit) break;
             }
         }
         return matches;
     }
+
+    /** Split a query into lowercase whitespace-separated tokens ("" -> none). */
+    public static String[] tokenize(String query) {
+        String trimmed = query == null ? ""
+            : query.trim()
+                .toLowerCase(Locale.ROOT);
+        return trimmed.isEmpty() ? EMPTY_TOKENS : trimmed.split("\\s+");
+    }
+
+    /** True if every token is a substring of the (lowercase) haystack. */
+    public static boolean matchesAll(String lowerHaystack, String[] tokens) {
+        for (String token : tokens) {
+            if (!lowerHaystack.contains(token)) return false;
+        }
+        return true;
+    }
+
+    private static final String[] EMPTY_TOKENS = new String[0];
 
     private static List<Entry> build() {
         long start = System.currentTimeMillis();

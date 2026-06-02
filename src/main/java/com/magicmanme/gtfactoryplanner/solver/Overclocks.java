@@ -40,14 +40,22 @@ public final class Overclocks {
         if (machine.perfectOC) {
             calc.enablePerfectOC();
         }
-        if (machine.machineHeat > 0 && recipe.specialValue > 0) {
+        if (machine.coilHeat > 0 && recipe.specialValue > 0) {
             calc.setHeatOC(true)
                 .setHeatDiscount(true)
-                .setMachineHeat(machine.machineHeat)
+                .setMachineHeat(totalHeatCapacity(machine))
                 .setRecipeHeat(recipe.specialValue);
         }
 
         calc.calculate();
         return new OcResult(calc.getConsumption(), Math.max(1, calc.getDuration()));
+    }
+
+    /**
+     * Total heat capacity per the EBF formula (MTEElectricBlastFurnace):
+     * coil base heat + 100 K per voltage tier above MV.
+     */
+    public static int totalHeatCapacity(MachineConfig machine) {
+        return machine.coilHeat + 100 * Math.max(0, machine.voltageTier - 2);
     }
 }
