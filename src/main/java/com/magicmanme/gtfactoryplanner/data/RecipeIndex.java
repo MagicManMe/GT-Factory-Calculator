@@ -109,8 +109,12 @@ public final class RecipeIndex {
             for (int i = 0; i < r.mOutputs.length; i++) {
                 ItemStack stack = r.mOutputs[i];
                 if (stack == null || stack.getItem() == null) continue;
-                // Chanced outputs: use the long-run expected amount.
-                double chance = chanceAt(r.mOutputChances, i);
+                // Chanced outputs: use the long-run expected amount. Read via the
+                // getOutputChance(i) METHOD, not the backing field — GTNH renamed the
+                // field (mChances -> mOutputChances) between GT versions, but the
+                // method name/contract (1..10000, 10000 = guaranteed) is stable across
+                // both, so this stays binary-compatible with old and new packs.
+                double chance = r.getOutputChance(i) / 10000.0;
                 itemOutputs.add(new PlannerRecipe.RStack(ItemKey.of(stack), stack.stackSize * chance));
             }
         }
@@ -139,11 +143,5 @@ public final class RecipeIndex {
             r.mEUt,
             r.mDuration,
             r.mSpecialValue);
-    }
-
-    /** Output chance in [0,1]; GT stores chances out of 10000, missing array = guaranteed. */
-    private static double chanceAt(int[] chances, int index) {
-        if (chances == null || index >= chances.length) return 1.0;
-        return chances[index] / 10000.0;
     }
 }

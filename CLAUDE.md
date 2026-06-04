@@ -51,6 +51,13 @@ packages, remotes, or authorship).
 3. GT5U classes dropped the `GT_` prefix: `RecipeMap`, `GTRecipe`, `GTValues`,
    `OverclockCalculator` (old tutorials are stale). `GTRecipe.mSpecialValue` =
    coil heat (EBF) / fusion start energy / fuel value depending on map.
+   **Version fragility:** GTNH renames public FIELDS between GT versions (e.g.
+   chanced outputs `mChances` -> `mOutputChances` in "The Great Renaming",
+   PR #3014). Reading the field directly = `NoSuchFieldError` on older/newer
+   packs. Prefer stable accessor METHODS where they exist: read item-output
+   chance via `recipe.getOutputChance(i)` (1..10000, 10000 = guaranteed), NOT
+   the field. We compile against the latest GT5U; users may run older or daily
+   builds, so favor methods over fields for anything that might get renamed.
 4. Dynamic list rebuild in MUI2: `ListWidget.removeAll()` + `.child(...)` works;
    don't build 100k `setEnabledIf` rows (too slow) — rebuild capped result lists.
 5. PowerShell 5.1 mangles git commit messages containing double quotes — avoid
