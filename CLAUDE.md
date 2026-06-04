@@ -6,6 +6,12 @@ computes machine counts / overclocks / EU/t for user-built plans. Owner identity
 **magicmanme** (personal account — never use the euro-wall work identity for
 packages, remotes, or authorship).
 
+## Working preferences
+
+- **Never launch the game automatically.** Do not run `./gradlew runClient` (or
+  otherwise open the client) without asking first — the user runs it themselves.
+  Build/compile (`build`, `compileJava`, `spotlessApply`) is fine to run freely.
+
 ## Build & test
 
 - `./gradlew build` — jar in `build/libs`; `./gradlew runClient` — dev client
@@ -101,7 +107,11 @@ Done: recipe index, sequential solver, planner table UI, NEI-style recipe picker
 search ("naq ingot" matches "Naquadah Ingot"), EBF-family coil selection
 (coil button on heat-gated lines; heat = coilHeat + 100*(tier-2) via GT's
 HeatingCoilLevel enum, feeds OverclockCalculator heat OC/discount) — both
-play-tested OK in the dreamcraft dev instance.
+play-tested OK in the dreamcraft dev instance. UI polish pass (section
+dividers, consistent 16px buttons, machine tabs truncated to one line +
+yellow-bold selected, readable button-overlay labels). NOTE: keep window
+panel sizes <= ~370x240 / 380x250 / 260x230 — larger clips on the user's
+screen; MUI2 panels don't auto-fit the viewport.
 Next: plan persistence (NBT/file) → OreDict unification → fuller multiblock
 presets (parallels, GT++ speed/EU modifiers) → matrix solver (free/eliminated
 byproduct control) → AE2 pattern / Level Maintainer export (novel differentiator).

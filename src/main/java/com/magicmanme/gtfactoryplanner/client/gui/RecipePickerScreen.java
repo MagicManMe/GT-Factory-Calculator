@@ -127,7 +127,7 @@ public class RecipePickerScreen extends ModularScreen {
         };
         rebuildRecipes.run();
 
-        ListWidget machineList = (ListWidget) new ListWidget<>().width(112)
+        ListWidget machineList = (ListWidget) new ListWidget<>().width(124)
             .heightRel(1f);
         machineList.child(machineRow(null, producing.size(), selectedMap, rebuildRecipes));
         for (Map.Entry<String, List<Entry>> group : orderedGroups) {
@@ -159,6 +159,7 @@ public class RecipePickerScreen extends ModularScreen {
                                     IKey.str("§lRecipes producing§r %s §7(%d)", target.displayName(), producing.size()))
                                         .expanded()
                                         .height(12)))
+                    .child(UiHelpers.divider())
                     .child(new TextFieldWidget().value(new StringValue.Dynamic(() -> query[0], text -> {
                         String lower = text.trim()
                             .toLowerCase(Locale.ROOT);
@@ -174,12 +175,13 @@ public class RecipePickerScreen extends ModularScreen {
                         Flow.row()
                             .widthRel(1f)
                             .expanded()
-                            .childPadding(4)
+                            .childPadding(6)
                             .child(machineList)
                             .child(recipeList))
+                    .child(UiHelpers.divider())
                     .child(
-                        new ButtonWidget<>().width(50)
-                            .height(14)
+                        new ButtonWidget<>().width(56)
+                            .height(UiHelpers.BTN)
                             .overlay(IKey.str("Back"))
                             .onMousePressed(b -> {
                                 PlannerScreen.reopen();
@@ -187,14 +189,23 @@ public class RecipePickerScreen extends ModularScreen {
                             })));
     }
 
-    /** Left-column machine tab (null mapName = "All machines"). */
+    /**
+     * Left-column machine tab (null mapName = "All machines"). The button overlay
+     * renders the label in the theme's (readable) text colour; the name is
+     * truncated so it stays on one line and never overlaps the tab below. The
+     * selected tab is marked yellow+bold (no prefix, so nothing shifts), and the
+     * full name + count is always in the tooltip.
+     */
     private static IWidget machineRow(String mapName, int count, String[] selectedMap, Runnable rebuildRecipes) {
         String name = mapName == null ? "All machines" : UiHelpers.machineName(mapName);
-        String label = name + " §7(" + count + ")";
+        String shown = UiHelpers.truncate(name, 15);
         return new ButtonWidget<>().widthRel(1f)
-            .height(13)
-            .overlay(IKey.dynamicKey(() -> IKey.str((Objects.equals(selectedMap[0], mapName) ? "§e> " : "") + label)))
-            .addTooltipLine(name)
+            .height(14)
+            .overlay(
+                IKey.dynamicKey(
+                    () -> IKey
+                        .str((Objects.equals(selectedMap[0], mapName) ? "§e§l" : "") + shown + " §7(" + count + ")")))
+            .addTooltipLine(name + " (" + count + ")")
             .onMousePressed(b -> {
                 selectedMap[0] = mapName;
                 rebuildRecipes.run();
@@ -227,8 +238,7 @@ public class RecipePickerScreen extends ModularScreen {
                 .height(12));
 
         row.child(
-            new ButtonWidget<>().width(14)
-                .height(14)
+            new ButtonWidget<>().size(UiHelpers.BTN)
                 .overlay(IKey.str("§2+"))
                 .addTooltipLine("Add this recipe to the plan")
                 .onMousePressed(b -> {

@@ -59,7 +59,9 @@ public class ItemPickerScreen extends ModularScreen {
                     .crossAxisAlignment(Alignment.CrossAxis.START)
                     .child(
                         IKey.str("§lChoose a product")
-                            .asWidget())
+                            .asWidget()
+                            .height(10))
+                    .child(UiHelpers.divider())
                     .child(new TextFieldWidget().value(new StringValue.Dynamic(() -> query[0], text -> {
                         if (!text.equals(query[0])) {
                             query[0] = text;
@@ -70,9 +72,10 @@ public class ItemPickerScreen extends ModularScreen {
                         .widthRel(1f)
                         .height(14))
                     .child(resultList)
+                    .child(UiHelpers.divider())
                     .child(
-                        new ButtonWidget<>().width(50)
-                            .height(14)
+                        new ButtonWidget<>().width(56)
+                            .height(UiHelpers.BTN)
                             .overlay(IKey.str("Cancel"))
                             .onMousePressed(b -> {
                                 PlannerScreen.reopen();
@@ -83,7 +86,7 @@ public class ItemPickerScreen extends ModularScreen {
     private static IWidget resultRow(SearchCatalog.Entry entry, Consumer<ResourceKey> onPick) {
         return Flow.row()
             .widthRel(1f)
-            .height(18)
+            .height(UiHelpers.ROW_H)
             .childPadding(3)
             .crossAxisAlignment(Alignment.CrossAxis.CENTER)
             .child(UiHelpers.icon(entry.key))
@@ -91,9 +94,9 @@ public class ItemPickerScreen extends ModularScreen {
                 new ScrollingTextWidget(IKey.str(entry.displayName)).expanded()
                     .height(12))
             .child(
-                new ButtonWidget<>().width(14)
-                    .height(14)
-                    .overlay(IKey.str("§2>"))
+                new ButtonWidget<>().size(UiHelpers.BTN)
+                    .overlay(IKey.str("§2+"))
+                    .addTooltipLine("Use this product")
                     .onMousePressed(b -> {
                         onPick.accept(entry.key);
                         return true;

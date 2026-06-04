@@ -10,6 +10,7 @@ import com.cleanroommc.modularui.api.drawable.IKey;
 import com.cleanroommc.modularui.api.widget.IWidget;
 import com.cleanroommc.modularui.drawable.FluidDrawable;
 import com.cleanroommc.modularui.drawable.ItemDrawable;
+import com.cleanroommc.modularui.drawable.Rectangle;
 import com.cleanroommc.modularui.widgets.ItemDisplayWidget;
 import com.magicmanme.gtfactoryplanner.data.FluidKey;
 import com.magicmanme.gtfactoryplanner.data.ItemKey;
@@ -18,10 +19,43 @@ import com.magicmanme.gtfactoryplanner.data.ResourceKey;
 
 import gregtech.api.enums.HeatingCoilLevel;
 
-/** Small shared UI building blocks. */
+/** Small shared UI building blocks and shared sizing/colour constants. */
 final class UiHelpers {
 
     private UiHelpers() {}
+
+    // --------------------------------------------------------------- constants
+
+    /** Standard table row height. */
+    static final int ROW_H = 18;
+    /** Standard square action-button size (matches the 16px ingredient icons). */
+    static final int BTN = 16;
+    /** Subtle divider colour for section separators. */
+    private static final int DIVIDER_COLOR = 0xFF505050;
+
+    // ------------------------------------------------------------------ layout
+
+    /** A thin full-width horizontal line for separating sections. */
+    static IWidget divider() {
+        return new Rectangle().color(DIVIDER_COLOR)
+            .asWidget()
+            .widthRel(1f)
+            .height(1)
+            .margin(0, 2);
+    }
+
+    /** A bold section-header label. */
+    static IWidget sectionHeader(String text) {
+        return IKey.str("§l" + text)
+            .asWidget()
+            .height(10);
+    }
+
+    /** Truncate to a max length with an ellipsis, for single-line labels. */
+    static String truncate(String text, int max) {
+        if (text.length() <= max) return text;
+        return text.substring(0, Math.max(1, max - 1)) + "…";
+    }
 
     // ------------------------------------------------------------------- coils
 

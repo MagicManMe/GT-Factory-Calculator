@@ -54,25 +54,36 @@ public class PlannerScreen extends CustomModularScreen {
 
         Flow root = Flow.column()
             .sizeRel(1f)
-            .childPadding(3)
+            .childPadding(4)
             .crossAxisAlignment(Alignment.CrossAxis.START);
 
         root.child(
-            IKey.str("§lGregTech Factory Planner§r §7(%,d recipes indexed)", RecipeIndex.get().recipes.size())
-                .asWidget());
+            Flow.row()
+                .widthRel(1f)
+                .height(12)
+                .crossAxisAlignment(Alignment.CrossAxis.CENTER)
+                .child(
+                    IKey.str("§lGregTech Factory Planner")
+                        .asWidget()
+                        .expanded()
+                        .height(10))
+                .child(
+                    IKey.str("§7%,d recipes", RecipeIndex.get().recipes.size())
+                        .asWidget()
+                        .height(10)));
+        root.child(UiHelpers.divider());
 
         root.child(targetRow(plan));
 
-        root.child(
-            IKey.str("§nProduction lines")
-                .asWidget());
+        root.child(UiHelpers.sectionHeader("Production lines"));
+        root.child(UiHelpers.divider());
         List<IWidget> lineRows = new ArrayList<>();
         for (PlanLine line : plan.lines) {
             lineRows.add(lineRow(plan, line));
         }
         if (lineRows.isEmpty()) {
             lineRows.add(
-                IKey.str("§7Add recipes via [+] next to a needed ingredient below.")
+                IKey.str("§7Add recipes via the [§2+§7] next to a needed input below.")
                     .asWidget());
         }
         root.child(
@@ -80,19 +91,20 @@ public class PlannerScreen extends CustomModularScreen {
                 .expanded()
                 .children(lineRows, w -> w));
 
-        root.child(
-            IKey.str("§nNeeded inputs / surplus")
-                .asWidget());
+        root.child(UiHelpers.sectionHeader("Needed inputs / surplus"));
+        root.child(UiHelpers.divider());
         root.child(
             new ListWidget<>().widthRel(1f)
-                .height(64)
+                .height(66)
                 .children(balanceRows(), w -> w));
 
+        root.child(UiHelpers.divider());
         root.child(
             IKey.dynamicKey(
                 () -> IKey
                     .str("§6Total average power: %s EU/t", UiHelpers.formatAmount(PlannerState.result.totalAverageEuT)))
-                .asWidget());
+                .asWidget()
+                .height(10));
 
         return ModularPanel.defaultPanel("planner", 370, 240)
             .padding(7)
@@ -103,8 +115,8 @@ public class PlannerScreen extends CustomModularScreen {
 
     private IWidget targetRow(Plan plan) {
         if (plan.targets.isEmpty()) {
-            return new ButtonWidget<>().width(140)
-                .height(16)
+            return new ButtonWidget<>().width(150)
+                .height(UiHelpers.BTN)
                 .overlay(IKey.str("Set target product..."))
                 .onMousePressed(b -> {
                     ClientGUI.open(new ItemPickerScreen(PlannerScreen::setTarget));
@@ -115,7 +127,7 @@ public class PlannerScreen extends CustomModularScreen {
         Plan.Target target = plan.targets.get(0);
         return Flow.row()
             .widthRel(1f)
-            .height(18)
+            .height(UiHelpers.ROW_H)
             .childPadding(4)
             .crossAxisAlignment(Alignment.CrossAxis.CENTER)
             .child(UiHelpers.icon(target.key))
@@ -133,9 +145,10 @@ public class PlannerScreen extends CustomModularScreen {
                 IKey.str("/s")
                     .asWidget())
             .child(
-                new ButtonWidget<>().width(46)
-                    .height(14)
+                new ButtonWidget<>().width(52)
+                    .height(UiHelpers.BTN)
                     .overlay(IKey.str("Change"))
+                    .addTooltipLine("Pick a different target product")
                     .onMousePressed(b -> {
                         ClientGUI.open(new ItemPickerScreen(PlannerScreen::setTarget));
                         return true;
@@ -154,7 +167,7 @@ public class PlannerScreen extends CustomModularScreen {
     private IWidget lineRow(Plan plan, PlanLine line) {
         Flow row = Flow.row()
             .widthRel(1f)
-            .height(18)
+            .height(UiHelpers.ROW_H)
             .childPadding(3)
             .crossAxisAlignment(Alignment.CrossAxis.CENTER)
             .child(UiHelpers.icon(UiHelpers.primaryOutput(line.recipe)))
@@ -162,10 +175,10 @@ public class PlannerScreen extends CustomModularScreen {
                 new ScrollingTextWidget(IKey.str(UiHelpers.machineName(line.recipe.mapName))).expanded()
                     .height(12))
             .child(
-                new ButtonWidget<>().width(32)
-                    .height(14)
+                new ButtonWidget<>().width(34)
+                    .height(UiHelpers.BTN)
                     .overlay(IKey.dynamicKey(() -> IKey.str(GTValues.VN[line.machine.voltageTier])))
-                    .addTooltipLine("Click: higher tier. Right-click: lower tier.")
+                    .addTooltipLine("Voltage tier — Click: higher. Right-click: lower.")
                     .onMousePressed(mouseButton -> {
                         cycleTier(line, mouseButton == 0 ? 1 : -1);
                         return true;
@@ -173,8 +186,8 @@ public class PlannerScreen extends CustomModularScreen {
 
         if (UiHelpers.usesCoils(line.recipe)) {
             row.child(
-                new ButtonWidget<>().width(54)
-                    .height(14)
+                new ButtonWidget<>().width(56)
+                    .height(UiHelpers.BTN)
                     .overlay(IKey.dynamicKey(() -> IKey.str(UiHelpers.coilName(line.machine.coilHeat))))
                     .tooltipAutoUpdate(true)
                     .tooltipBuilder(tooltip -> {
@@ -205,9 +218,8 @@ public class PlannerScreen extends CustomModularScreen {
                     .asWidget()
                     .width(68))
             .child(
-                new ButtonWidget<>().width(14)
-                    .height(14)
-                    .overlay(IKey.str("§4x"))
+                new ButtonWidget<>().size(UiHelpers.BTN)
+                    .overlay(IKey.str("§cx"))
                     .addTooltipLine("Remove this line")
                     .onMousePressed(b -> {
                         plan.lines.remove(line);
@@ -269,7 +281,7 @@ public class PlannerScreen extends CustomModularScreen {
     private IWidget balanceRow(ResourceKey key, boolean isSurplus) {
         Flow row = Flow.row()
             .widthRel(1f)
-            .height(16)
+            .height(UiHelpers.ROW_H)
             .childPadding(3)
             .crossAxisAlignment(Alignment.CrossAxis.CENTER)
             .child(UiHelpers.icon(key))
@@ -290,8 +302,7 @@ public class PlannerScreen extends CustomModularScreen {
             .producing(key)
             .isEmpty()) {
             row.child(
-                new ButtonWidget<>().width(14)
-                    .height(14)
+                new ButtonWidget<>().size(UiHelpers.BTN)
                     .overlay(IKey.str("§2+"))
                     .addTooltipLine(
                         "Add a recipe producing " + key.displayName()
