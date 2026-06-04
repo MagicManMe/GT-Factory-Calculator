@@ -78,6 +78,11 @@ packages, remotes, or authorship).
    from EBF when material blast temp > 1750K (`ProcessingDust.java`);
    stainless is 1700K → direct ingot, no hot stage. Final verification of
    recipe behavior belongs in a real GTNH instance (drop the jar in mods/).
+   **0.2.1 verified working in a real GTNH instance (2.9 daily build).** Note
+   the dev/compile deps (GT 5.09.52.573, MUI2 2.3.72) match newer/daily packs;
+   older stable packs (e.g. 2.7.x: MUI2 2.2.18) lack FluidDrawable /
+   TextFieldWidget.numbersDouble / autoUpdateOnChange and would crash in the UI —
+   target newer packs, or guard those calls if older-pack support is needed.
 
 ## Useful facts
 
